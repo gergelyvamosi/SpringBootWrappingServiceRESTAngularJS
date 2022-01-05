@@ -1,0 +1,18 @@
+READ.ME
+--------------------------------------------------------------------------------------------------------------
+This is a fully configured maven build and spring boot application with AngularJS for testing purposes.
+
+This app containing a word wrapping service for demo reasons. It is a concurrent threading implementation.
+
+Test webapp is included. Run the SpringBootWrappingServiceRESTAngularJS app as java app in your favorite IDE.
+Test is possible at url http://localhost:8080/textWrapAngularJS.html.
+
+Webapp form:
+Enter -1 for new request (default) or enter returned workId for existing requests.
+
+Number of working threads is configurable in the spring boot application.properties file thread.pool.size=5.
+
+Single way tested, not tested on big loads.
+--------------------------------------------------------------------------------------------------------------
+
+gvamosi@yahoo.com
