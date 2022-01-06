@@ -19,6 +19,7 @@ public class WrappingController {
 
 	@RequestMapping(value = "/api/LineBreak", method = RequestMethod.POST, headers = "Accept=application/json")
 	public ResponseEntity<Wrapping> wrapText(@RequestBody Wrapping wrapping) {
+		wrapping.setProcessed(false);
 		Wrapping result = wrappingService.wrapText(wrapping);
 		if (result.isProcessed()) {
 			return new ResponseEntity<>(result, HttpStatus.OK);
