@@ -16,6 +16,8 @@ public class Wrapping{
 	private String textToWrap = "";
 	
 	private List<String> wrappedText = new ArrayList<String>();
+	
+	private boolean processed = false;
 
 	public Wrapping() {
 	}
@@ -46,5 +48,11 @@ public class Wrapping{
 	}
 	public void setWrappedText(List<String> wrappedText) {
 		this.wrappedText = wrappedText;
+	}
+	public boolean isProcessed() {
+		return processed;
+	}
+	public void setProcessed(boolean processed) {
+		this.processed = processed;
 	}
 }

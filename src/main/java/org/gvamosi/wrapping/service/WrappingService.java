@@ -68,6 +68,7 @@ public class WrappingService {
 				wrapping.setWorkId(threadId);
 				wrapping = wrapTextGivenLength(wrapping);
 			}
+			wrapping.setProcessed(true);
 			return wrapping;
 		}
 	}
@@ -80,10 +81,10 @@ public class WrappingService {
 			do {
 				sb.append(splitted[i+j]);
 				j++;
-				if (i+j < splitted.length) {
+				if (i+j < splitted.length && sb.length() < wrapping.getWrapLength()) {
 					sb.append(" ");
 				}
-			} while (i+j < splitted.length && sb.length() + splitted[i+j].length() < wrapping.getWrapLength());
+			} while (i+j < splitted.length && sb.length() + splitted[i+j].length() <= wrapping.getWrapLength());
 			i += j - 1;
 			wrapping.getWrappedText().add(sb.toString());
 		}

@@ -7,34 +7,29 @@
 <title>Text Wrap AngularJS</title>
 <script type="text/javascript">
             var app = angular.module("TextWrapService", []);
-         
+            
             //Controller Part
             app.controller("TextWrapController", function($scope, $http) {
          
-               
                 $scope.wrappingForm = {
                 	workId : -1,
                 	wrapLength : 10,
                     textToWrap : "",
                     wrappedText : []
                 };
-         
-                //Now load the data from server
-                //_refreshWrappingData();
-         
-                //HTTP POST/PUT methods for add/edit customer 
-                // with the help of id, we are going to find out whether it is put or post operation
+                
+                $scope.errorMsg = "";
                 
                 $scope.wrapText = function() {
          
                     var method = "";
                     var url = "";
                     if ($scope.wrappingForm.workId == -1) {
-                        //Id is absent in form data, it is create new customer operation
+                    	// if new request, clears wrappedText
+                    	$scope.wrappingForm.wrappedText = [];
                         method = "POST";
                         url = '/api/LineBreak';
                     } else {
-                        //Id is present in form data, it is edit customer operation
                         method = "GET";
                         url = '/api/LineBreak/' + $scope.wrappingForm.workId;
                     }
@@ -52,15 +47,17 @@
                 /* Private Methods */
          
                 function _success(response) {
-                	 $scope.wrappingForm = response.data;
-                    //_clearFormData()
+               		$scope.wrappingForm = response.data;
+               		$scope.errorMsg = "";
+                	//_clearFormData()
                 }
          
                 function _error(response) {
-                    console.log(response.statusText);
+                	console.log(response.status);
+               		$scope.errorMsg = "Error " + response.status;
+                	//_clearFormData();
                 }
          
-                //Clear the form
                 function _clearFormData() {
                     $scope.wrappingForm.workId = -1;
                     $scope.wrappingForm.wrapLength = 10;
@@ -151,7 +148,7 @@ td, th {
 		<table>
 
 			<tr>
-				<th colspan="2">Submit text to wrap</th>
+				<th colspan="2">Submit text to wrap <font color="red">{{errorMsg}}</font></th>
 			</tr>
 			<tr>
 				<td>Work id</td>
