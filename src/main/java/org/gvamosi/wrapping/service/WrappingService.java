@@ -1,9 +1,7 @@
 package org.gvamosi.wrapping.service;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import org.gvamosi.wrapping.model.Wrapping;
@@ -19,36 +17,36 @@ public class WrappingService {
 	@Qualifier("fixedThreadPool")
 	private ExecutorService executorService;
 
-	Map<Long, Wrapping> results = new HashMap<Long, Wrapping>();
+	private Map<Long, Wrapping> results = new ConcurrentHashMap<Long, Wrapping>();
 
-	public Wrapping getWrapping(long id) {
-		return results.get(id);
+	@Async
+	public Wrapping getWrapping(long workId) {
+		return results.get(workId);
 	}
-
+	
+	@Async
 	public Wrapping wrapText(Wrapping wrapping) {
 		return executeWorkerThread(wrapping);
 	}
 
+	@Async
 	private Wrapping executeWorkerThread(Wrapping wrapping) {
 		if (wrapping.getWorkId() == -1) {
-			Future<Wrapping> futureResult = executorService.submit(new WorkerThread(wrapping));
-			try {
-				results.put((futureResult.get()).getWorkId(), futureResult.get());
-				return futureResult.get();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ExecutionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			WorkerThread worker = new WorkerThread(wrapping);
+			Future<Void> future = (Future<Void>) executorService.submit(worker);
+			if (future == null) {
+				// all right :)
 			}
-			return wrapping;
+			// wait for getting a real work ID
+			while (worker.getWrapping().getWorkId() == -1) {}
+			return worker.getWrapping();
+			// return wrapping;
 		} else {
 			return results.get(wrapping.getWorkId());
 		}
 	}
 
-	private class WorkerThread implements Callable<Wrapping> {
+	private class WorkerThread implements Runnable {
 
 		private Wrapping wrapping;
 
@@ -62,32 +60,34 @@ public class WrappingService {
 		}
 
 		@Override
-		public Wrapping call() {
+		public void run() {
 			long threadId = Thread.currentThread().getId();
-			if (wrapping.getWorkId() == -1) {
-				wrapping.setWorkId(threadId);
-				wrapping = wrapTextGivenLength(wrapping);
+			if (getWrapping().getWorkId() == -1) {
+				getWrapping().setWorkId(threadId);
+				getWrapping().setProcessed(false);
+				results.put(getWrapping().getWorkId(), getWrapping());
+				wrapTextGivenLength(getWrapping());
+				results.put(getWrapping().getWorkId(), getWrapping());
+				getWrapping().setProcessed(true);
+				results.put(getWrapping().getWorkId(), getWrapping());
 			}
-			wrapping.setProcessed(true);
-			return wrapping;
 		}
 	}
 
-	private Wrapping wrapTextGivenLength(Wrapping wrapping) {
+	private void wrapTextGivenLength(Wrapping wrapping) {
 		String splitted[] = wrapping.getTextToWrap().split("\\s+");
 		for (int i = 0; i < splitted.length; i++) {
 			StringBuffer sb = new StringBuffer();
 			int j = 0;
 			do {
-				sb.append(splitted[i+j]);
+				sb.append(splitted[i + j]);
 				j++;
-				if (i+j < splitted.length && sb.length() < wrapping.getWrapLength()) {
+				if (i + j < splitted.length && sb.length() < wrapping.getWrapLength()) {
 					sb.append(" ");
 				}
-			} while (i+j < splitted.length && sb.length() + splitted[i+j].length() <= wrapping.getWrapLength());
+			} while (i + j < splitted.length && sb.length() + splitted[i + j].length() <= wrapping.getWrapLength());
 			i += j - 1;
 			wrapping.getWrappedText().add(sb.toString());
 		}
-		return wrapping;
 	}
 }

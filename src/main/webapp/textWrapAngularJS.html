@@ -15,7 +15,8 @@
                 	workId : -1,
                 	wrapLength : 10,
                     textToWrap : "",
-                    wrappedText : []
+                    wrappedText : [],
+                    processed : false
                 };
                 
                 $scope.errorMsg = "";
@@ -27,6 +28,7 @@
                     if ($scope.wrappingForm.workId == -1) {
                     	// if new request, clears wrappedText
                     	$scope.wrappingForm.wrappedText = [];
+                    	$scope.wrappingForm.processed = false;
                         method = "POST";
                         url = '/api/LineBreak';
                     } else {
