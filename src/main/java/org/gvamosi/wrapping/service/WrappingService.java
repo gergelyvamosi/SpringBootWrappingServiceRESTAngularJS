@@ -7,7 +7,6 @@ import java.util.concurrent.Future;
 import org.gvamosi.wrapping.model.Wrapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service("wrappingService")
@@ -19,17 +18,14 @@ public class WrappingService {
 
 	private Map<String, Wrapping> results = new ConcurrentHashMap<String, Wrapping>();
 
-	@Async
 	public Wrapping getWrapping(long workId, String sessionId) {
 		return results.get(sessionId + workId);
 	}
 	
-	@Async
 	public Wrapping wrapText(Wrapping wrapping, String sessionId) {
 		return executeWorkerThread(wrapping, sessionId);
 	}
 
-	@Async
 	private Wrapping executeWorkerThread(Wrapping wrapping, String sessionId) {
 		if (wrapping.getWorkId() == -1) {
 			WorkerThread worker = new WorkerThread(wrapping, sessionId);
@@ -60,7 +56,6 @@ public class WrappingService {
 			this.sessionId = sessionId;
 		}
 
-		@Async
 		public Wrapping getWrapping() {
 			return wrapping;
 		}
