@@ -33,12 +33,12 @@ public class WrappingService {
 	private Wrapping executeWorkerThread(Wrapping wrapping) {
 		if (wrapping.getWorkId() == -1) {
 			WorkerThread worker = new WorkerThread(wrapping);
-			Future<Void> future = (Future<Void>) executorService.submit(worker);
-			if (future == null) {
-				// all right :)
-			}
+			
+			executorService.execute(worker);
+			
 			// wait for getting a real work ID
 			while (worker.getWrapping().getWorkId() == -1) {}
+			
 			return worker.getWrapping();
 			// return wrapping;
 		} else {
