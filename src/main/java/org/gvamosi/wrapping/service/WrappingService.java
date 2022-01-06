@@ -34,7 +34,11 @@ public class WrappingService {
 		if (wrapping.getWorkId() == -1) {
 			WorkerThread worker = new WorkerThread(wrapping);
 			
-			executorService.execute(worker);
+			Future<Void> task = (Future<Void>) executorService.submit(worker);
+			
+			if (task == null) {
+				// all right :)
+			}
 			
 			// wait for getting a real work ID
 			while (worker.getWrapping().getWorkId() == -1) {}
@@ -63,11 +67,17 @@ public class WrappingService {
 		public void run() {
 			long threadId = Thread.currentThread().getId();
 			if (getWrapping().getWorkId() == -1) {
+				
+				// set workId
 				getWrapping().setWorkId(threadId);
 				getWrapping().setProcessed(false);
 				results.put(getWrapping().getWorkId(), getWrapping());
+				
+				// wrapping
 				wrapTextGivenLength(getWrapping());
 				results.put(getWrapping().getWorkId(), getWrapping());
+				
+				// processed true
 				getWrapping().setProcessed(true);
 				results.put(getWrapping().getWorkId(), getWrapping());
 			}
