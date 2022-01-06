@@ -9,8 +9,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ExecutorServiceConfig {
 	
-    @Bean("fixedThreadPool")
-    public ExecutorService fixedThreadPool() {
+    @Bean("cachedThreadPool")
+    public ExecutorService cachedThreadPool() {
         ExecutorService executorService = Executors.newCachedThreadPool();
         return executorService;
     }

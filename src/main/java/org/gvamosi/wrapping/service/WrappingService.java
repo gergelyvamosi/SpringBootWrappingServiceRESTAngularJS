@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 public class WrappingService {
 
 	@Autowired
-	@Qualifier("fixedThreadPool")
+	@Qualifier("cachedThreadPool")
 	private ExecutorService executorService;
 
 	private Map<Long, Wrapping> results = new ConcurrentHashMap<Long, Wrapping>();
