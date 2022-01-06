@@ -17,22 +17,22 @@ public class WrappingService {
 	@Qualifier("cachedThreadPool")
 	private ExecutorService executorService;
 
-	private Map<Long, Wrapping> results = new ConcurrentHashMap<Long, Wrapping>();
+	private Map<String, Wrapping> results = new ConcurrentHashMap<String, Wrapping>();
 
 	@Async
-	public Wrapping getWrapping(long workId) {
-		return results.get(workId);
+	public Wrapping getWrapping(long workId, String sessionId) {
+		return results.get(sessionId + workId);
 	}
 	
 	@Async
-	public Wrapping wrapText(Wrapping wrapping) {
-		return executeWorkerThread(wrapping);
+	public Wrapping wrapText(Wrapping wrapping, String sessionId) {
+		return executeWorkerThread(wrapping, sessionId);
 	}
 
 	@Async
-	private Wrapping executeWorkerThread(Wrapping wrapping) {
+	private Wrapping executeWorkerThread(Wrapping wrapping, String sessionId) {
 		if (wrapping.getWorkId() == -1) {
-			WorkerThread worker = new WorkerThread(wrapping);
+			WorkerThread worker = new WorkerThread(wrapping, sessionId);
 			
 			Future<Void> task = (Future<Void>) executorService.submit(worker);
 			
@@ -46,16 +46,18 @@ public class WrappingService {
 			return worker.getWrapping();
 			// return wrapping;
 		} else {
-			return results.get(wrapping.getWorkId());
+			return results.get(sessionId + wrapping.getWorkId());
 		}
 	}
 
 	private class WorkerThread implements Runnable {
 
 		private Wrapping wrapping;
+		private String sessionId;
 
-		public WorkerThread(Wrapping wrapping) {
+		public WorkerThread(Wrapping wrapping, String sessionId) {
 			this.wrapping = wrapping;
+			this.sessionId = sessionId;
 		}
 
 		@Async
@@ -71,15 +73,15 @@ public class WrappingService {
 				// set workId
 				getWrapping().setWorkId(threadId);
 				getWrapping().setProcessed(false);
-				results.put(getWrapping().getWorkId(), getWrapping());
+				results.put(sessionId + getWrapping().getWorkId(), getWrapping());
 				
 				// wrapping
 				wrapTextGivenLength(getWrapping());
-				results.put(getWrapping().getWorkId(), getWrapping());
+				results.put(sessionId + getWrapping().getWorkId(), getWrapping());
 				
 				// processed true
 				getWrapping().setProcessed(true);
-				results.put(getWrapping().getWorkId(), getWrapping());
+				results.put(sessionId + getWrapping().getWorkId(), getWrapping());
 			}
 		}
 	}
