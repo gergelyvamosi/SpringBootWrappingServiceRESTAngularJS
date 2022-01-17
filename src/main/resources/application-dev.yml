@@ -1,0 +1,8 @@
+server.port: 8080
+logging:
+    level:
+        root: DEBUG
+        org.gvamosi.wrapping.*: DEBUG
+servers: 
+    - www.abc.dev.com
+    - www.xyz.dev.com
