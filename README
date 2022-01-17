@@ -11,6 +11,11 @@ Webapp form:
 Enter -1 for new request (default) or enter returned workId for existing requests.
 
 Single way tested, not tested on big loads.
+
+Update 2022-01-17
+if git and maven is locally installed, do following steps to run the project
+git clone -b master https://github.com/profgvamosi/SpringBootWrappingServiceRESTAngularJS.git
+mvn spring-boot:run -Dapp.profiles=test
 --------------------------------------------------------------------------------------------------------------
 
 gvamosi@yahoo.com
