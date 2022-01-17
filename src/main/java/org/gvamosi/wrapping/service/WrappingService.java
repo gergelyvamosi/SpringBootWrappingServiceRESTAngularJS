@@ -84,7 +84,7 @@ public class WrappingService {
 	private void wrapTextGivenLength(Wrapping wrapping) {
 		String splitted[] = wrapping.getTextToWrap().split("\\s+");
 		for (int i = 0; i < splitted.length; i++) {
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			int j = 0;
 			do {
 				sb.append(splitted[i + j]);
