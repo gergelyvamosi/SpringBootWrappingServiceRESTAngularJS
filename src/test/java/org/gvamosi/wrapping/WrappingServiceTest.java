@@ -1,4 +1,5 @@
-package org.gvamosi.wrapping.test;
+package org.gvamosi.wrapping;
+
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
