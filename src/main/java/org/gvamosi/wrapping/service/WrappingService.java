@@ -17,6 +17,13 @@ public class WrappingService {
 	private ExecutorService executorService;
 
 	private Map<String, Wrapping> results = new ConcurrentHashMap<String, Wrapping>();
+	
+	/*
+	 * For JUnit Test reasons.
+	 */
+	public WrappingService(ExecutorService executorService) {
+		this.executorService = executorService;
+	}
 
 	public Wrapping getWrapping(long workId, String sessionId) {
 		return results.get(sessionId + workId);
@@ -46,7 +53,7 @@ public class WrappingService {
 		}
 	}
 
-	private class WorkerThread implements Runnable {
+	public class WorkerThread implements Runnable {
 
 		private Wrapping wrapping;
 		private String sessionId;
