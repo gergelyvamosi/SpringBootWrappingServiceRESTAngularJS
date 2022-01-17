@@ -52,7 +52,7 @@
 
 	</dependencies>
 	<properties>
-        <app.profiles>local,dev,test</app.profiles>
+        <app.profiles>local,dev</app.profiles>
     </properties>
     <build>
     	<finalName>SpringBootWrappingServiceRESTAngularJS</finalName>
