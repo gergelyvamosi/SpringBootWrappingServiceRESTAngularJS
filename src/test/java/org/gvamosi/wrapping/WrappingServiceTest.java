@@ -1,6 +1,7 @@
 package org.gvamosi.wrapping;
 
 
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -28,9 +29,9 @@ public class WrappingServiceTest {
 		wrappingService = new WrappingService(executorServiceMock);
 		MockitoAnnotations.initMocks(this);
 	}
-	
+
 	@Test
-	public void testWrapText() {
+	public void testWrapText10() {
 		String sessionId = "ABC001";
 		Wrapping wrapping = new Wrapping();
 		wrapping.setWorkId(-1);
@@ -41,4 +42,17 @@ public class WrappingServiceTest {
 				new String[] { "This is a ", "test ", "sentence ", "to ", "smoke-test", "line ", "breaking." });
 	}
 
+	@Test
+	public void testWrapText5() {
+		String sessionId = "ABC001";
+		Wrapping wrapping = new Wrapping();
+		wrapping.setWorkId(-1);
+		wrapping.setTextToWrap("This is a test where n is very tiny.");
+		wrapping.setWrapLength(5);
+		wrapping = wrappingService.wrapText(wrapping, sessionId);
+		Assert.assertNotEquals("Wrapping processed", wrapping.getWorkId(), -1);
+		Assert.assertArrayEquals("Wrapped text", wrapping.getWrappedText().toArray(),
+				new String[] { "This ", "is a ", "test ", "where", "n is ", "very ", "tiny." });
+	}
+	
 }
