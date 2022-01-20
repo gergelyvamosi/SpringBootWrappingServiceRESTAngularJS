@@ -46,14 +46,6 @@ public class WrappingService {
 			// wait for getting a real work ID
 			while (worker.getWrapping().getWorkId() == -1) {}
 			
-			// sleep 1 sec, otherwise unit tests not working!
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
 			return worker.getWrapping();
 			// return wrapping;
 		} else {

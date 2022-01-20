@@ -1,6 +1,5 @@
 package org.gvamosi.wrapping;
 
-
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -17,10 +16,10 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class WrappingServiceTest {
-	
+
 	@Mock
 	private ExecutorService executorServiceMock;
-	
+
 	private WrappingService wrappingService;
 
 	@Before
@@ -37,6 +36,15 @@ public class WrappingServiceTest {
 		wrapping.setWorkId(-1);
 		wrapping.setTextToWrap("This is a test sentence to smoke-test line breaking.");
 		wrapping = wrappingService.wrapText(wrapping, sessionId);
+		// sleep 1 sec, and rerun service - otherwise unit tests not working!
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		wrapping = wrappingService.getWrapping(wrapping.getWorkId(), sessionId);
+		//
 		Assert.assertNotEquals("Wrapping processed", wrapping.getWorkId(), -1);
 		Assert.assertArrayEquals("Wrapped text", wrapping.getWrappedText().toArray(),
 				new String[] { "This is a ", "test ", "sentence ", "to ", "smoke-test", "line ", "breaking." });
@@ -50,9 +58,18 @@ public class WrappingServiceTest {
 		wrapping.setTextToWrap("This is a test where n is very tiny.");
 		wrapping.setWrapLength(5);
 		wrapping = wrappingService.wrapText(wrapping, sessionId);
+		// sleep 1 sec, and rerun service - otherwise unit tests not working!
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		wrapping = wrappingService.getWrapping(wrapping.getWorkId(), sessionId);
+		//
 		Assert.assertNotEquals("Wrapping processed", wrapping.getWorkId(), -1);
 		Assert.assertArrayEquals("Wrapped text", wrapping.getWrappedText().toArray(),
 				new String[] { "This ", "is a ", "test ", "where", "n is ", "very ", "tiny." });
 	}
-	
+
 }
